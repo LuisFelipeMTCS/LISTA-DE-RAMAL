@@ -14,7 +14,7 @@ public interface RamalRepository extends JpaRepository<Ramal, Long> {
 
     Optional<Ramal> findRamalByemailDepartamento(String emailDepartamento);
 
-    @Query(value = "select count(a) from ListaRamal a where a.emailDepartamento=:paramMail")
+    @Query(value = "select count(a) from Ramal a where a.emailDepartamento=:paramMail")
     Integer countUtilizacaoEmailDepartamento(String paramMail);
     
 }
