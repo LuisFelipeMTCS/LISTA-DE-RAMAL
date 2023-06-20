@@ -12,7 +12,6 @@ public class RamalModel {
     @Id
     private Long id;
 
-
     private Long ramal;
     private String nomeSetor;
     private String emailDepartamento;

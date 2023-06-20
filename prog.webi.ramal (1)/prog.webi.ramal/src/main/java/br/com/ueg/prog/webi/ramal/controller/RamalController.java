@@ -4,12 +4,18 @@ import br.com.ueg.prog.webi.ramal.dto.RamalDto;
 import br.com.ueg.prog.webi.ramal.mapper.RamalMapper;
 import br.com.ueg.prog.webi.ramal.model.RamalModel;
 import br.com.ueg.prog.webi.ramal.service.RamalService;
+import br.com.ueg.prog.webi.ramal.util.GerarPdf;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -63,5 +69,21 @@ public class RamalController {
     public RamalDto ObterPorId(@PathVariable(name = "id") Long id){
         RamalModel ramalModel = this.ramalService.buscaRamalPorId(id);
         return this.ramalMapper.toRamalDto(ramalModel);
+    }
+
+    @GetMapping("/downloadPdf")
+    public ResponseEntity<ByteArrayResource> downloadPDF() throws Exception {
+        List<RamalModel> ramais = ramalService.listar();
+        byte[] pdfBytes = new GerarPdf().gerarPdf(ramais);
+
+        ByteArrayResource resource = new ByteArrayResource(pdfBytes);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=ramais.pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
     }
 }
